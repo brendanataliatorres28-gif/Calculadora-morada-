@@ -2,7 +2,7 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="Mi Calculadora Morada",
+    page_title="Calculadora Morada",
     page_icon="💜",
     layout="centered"
 )
@@ -10,72 +10,97 @@ st.set_page_config(
 st.markdown("""
 <style>
 .stApp {
-    background: linear-gradient(135deg, #1b102b, #392052, #7652a5);
+    background: linear-gradient(160deg, #180d2b, #49246b, #9b70d6);
     color: white;
+}
+.block-container {
+    max-width: 420px;
+    padding-top: 2rem;
 }
 h1 {
-    color: #f0d9ff;
     text-align: center;
+    color: #f3e5ff;
 }
-p {
-    color: #f5eaff;
-}
-.resultado {
-    background: #2b173e;
-    padding: 18px;
-    border-radius: 18px;
-    text-align: center;
-    border: 2px solid #c9a4ff;
+.pantalla {
+    background: #211331;
+    border: 2px solid #d5b4ff;
+    border-radius: 20px;
+    padding: 22px;
+    text-align: right;
+    margin-bottom: 18px;
 }
 div.stButton > button {
-    background-color: #a879e8;
+    background: #a879e8;
     color: white;
-    border-radius: 12px;
-    border: 1px solid #e5d0ff;
+    border: 1px solid #e8d7ff;
+    border-radius: 15px;
+    min-height: 55px;
+    font-size: 22px;
+    font-weight: bold;
+}
+div.stButton > button:hover {
+    background: #c49af5;
+    color: #211331;
+    border-color: white;
 }
 </style>
 """, unsafe_allow_html=True)
 
-st.title("💜 Mi Calculadora")
-st.write("✨ Tus cuentas, con estilo ✨")
+st.title("💜 Calculadora")
+st.caption("✨ Mi pequeño mundo lila ✨")
 
-st.markdown("### 🪻 Escribe tus números")
+if "expresion" not in st.session_state:
+    st.session_state.expresion = ""
+if "resultado" not in st.session_state:
+    st.session_state.resultado = ""
 
-numero1 = st.number_input(
-    "Primer número",
-    value=0.0,
-    key="numero1"
+st.markdown(
+    f'<div class="pantalla"><div>💜 Operación</div>'
+    f'<h2>{st.session_state.expresion or "0"}</h2>'
+    f'<div>Resultado: {st.session_state.resultado}</div></div>',
+    unsafe_allow_html=True
 )
 
-operacion = st.selectbox(
-    "Elige una operación",
-    ["➕ Sumar", "➖ Restar", "✖️ Multiplicar", "➗ Dividir"]
-)
-
-numero2 = st.number_input(
-    "Segundo número",
-    value=0.0,
-    key="numero2"
-)
-
-if st.button("💜 CALCULAR 💜", use_container_width=True):
-    if operacion == "➕ Sumar":
-        resultado = numero1 + numero2
-    elif operacion == "➖ Restar":
-        resultado = numero1 - numero2
-    elif operacion == "✖️ Multiplicar":
-        resultado = numero1 * numero2
+def pulsar(valor):
+    if valor == "C":
+        st.session_state.expresion = ""
+        st.session_state.resultado = ""
+    elif valor == "⌫":
+        st.session_state.expresion = st.session_state.expresion[:-1]
+    elif valor == "=":
+        try:
+            expr = st.session_state.expresion
+            permitido = set("0123456789.+-*/() ")
+            if not expr or any(c not in permitido for c in expr):
+                raise ValueError
+            respuesta = eval(expr, {"__builtins__": {}}, {})
+            st.session_state.resultado = str(respuesta)
+        except Exception:
+            st.session_state.resultado = "Error"
     else:
-        resultado = None if numero2 == 0 else numero1 / numero2
+        st.session_state.expresion += valor
 
-    if resultado is None:
-        st.error("🪻 No se puede dividir entre cero.")
-    else:
-        st.markdown(
-            f'<div class="resultado"><h3>✨ Resultado ✨</h3>'
-            f'<h2>{resultado:g}</h2></div>',
-            unsafe_allow_html=True
-        )
+filas = [
+    ["C", "⌫", "(", ")"],
+    ["7", "8", "9", "÷"],
+    ["4", "5", "6", "×"],
+    ["1", "2", "3", "−"],
+    ["0", ".", "=", "+"],
+]
 
-st.caption("Hecha con 💜 y Python")
+for fila in filas:
+    columnas = st.columns(4)
+    for columna, valor in zip(columnas, fila):
+        with columna:
+            if st.button(valor, key="boton_" + valor + "_" + str(filas.index(fila)),
+                         use_container_width=True):
+                traduccion = {"÷": "/", "×": "*", "−": "-"}
+                pulsar(traduccion.get(valor, valor))
+                st.rerun()
+
+st.markdown(
+    "<p style='text-align:center;color:#ead8ff'>Hecha con 💜 y Python</p>",
+    unsafe_allow_html=True
+)
+
 
