@@ -1,71 +1,75 @@
-import streamlit as st
-st.set_page_config(
-    page_title="Calculadora Morada",
-    page_icon="💜",
-    layout="centered"
+import tkinter as tk
+ventana = tk.Tk()
+ventana.title("Calculadora")
+ventana.geometry("320x500")
+ventana.resizable(False, False)
+ventana.configure(bg="#EADCF8")
+pantalla = tk.Entry(
+    ventana,
+    font=("Arial", 25),
+    bg="#F9F0FF",
+    fg="#7028A0",
+    justify="right",
+    bd=0
 )
-st.markdown("""
-<style>
-.stApp {
-    background: linear-gradient(135deg, #f3e5ff, #e0c3fc);
-}
-h1 {
-    color: #7629a6;
-    text-align: center;
-}
-div.stButton > button {
-    width: 100%;
-    height: 60px;
-    border-radius: 14px;
-    background-color: #c084fc;
-    color: white;
-    font-size: 22px;
-    font-weight: bold;
-    border: 2px solid #ffffff;
-}
-div.stButton > button:hover {
-    background-color: #a855f7;
-    color: white;
-}
-</style>
-""", unsafe_allow_html=True)
-st.markdown("# 💜 Calculadora")
-if "expresion" not in st.session_state:
-    st.session_state.expresion = ""
-st.text_input(
-    "Resultado y operación",
-    key="expresion",
-    placeholder="0"
-)
-filas = [
-    ["7", "8", "9", "÷"],
-    ["4", "5", "6", "×"],
-    ["1", "2", "3", "−"],
-    ["C", "0", ".", "+"]
-]
-for fila in filas:
-    columnas = st.columns(4, gap="small")
-    for i, numero in enumerate(fila):
-        if columnas[i].button(numero, key=f"{fila[0]}_{numero}"):
-            if numero == "C":
-                st.session_state.expresion = ""
-            else:
-                simbolo = numero
-                if numero == "×":
-                    simbolo = "*"
-                elif numero == "÷":
-                    simbolo = "/"
-                elif numero == "−":
-                    simbolo = "-"
-                st.session_state.expresion += simbolo
-            st.rerun()
-if st.button("＝ CALCULAR", use_container_width=True):
+pantalla.pack(fill="x", padx=15, pady=20, ipady=15)
+marco = tk.Frame(ventana, bg="#EADCF8")
+marco.pack(expand=True, fill="both", padx=10, pady=5)
+def pulsar(valor):
+    pantalla.insert(tk.END, valor)
+def borrar():
+    pantalla.delete(0, tk.END)
+def calcular():
     try:
-        expresion = st.session_state.expresion
-        permitidos = "0123456789.+-*/() "
-        if not expresion or any(c not in permitidos for c in expresion):
-            st.error("Escribe una operación válida.")
-        else:
-            resultado = eval(expresion, {"__builtins__": {}}, {})
-            st.session_state.expresion = str(resultado)
-            st.rerun()
+        resultado = eval(pantalla.get())
+        pantalla.delete(0, tk.END)
+        pantalla.insert(0, str(resultado))
+    except:
+        pantalla.delete(0, tk.END)
+        pantalla.insert(0, "Error")
+botones = [
+    ("C", 0, 0, "#D8B4F8", borrar),
+    ("(", 0, 1, "#D8B4F8", lambda: pulsar("(")),
+    (")", 0, 2, "#D8B4F8", lambda: pulsar(")")),
+    ("÷", 0, 3, "#C084FC", lambda: pulsar("/")),
+    ("7", 1, 0, "#FFFFFF", lambda: pulsar("7")),
+    ("8", 1, 1, "#FFFFFF", lambda: pulsar("8")),
+    ("9", 1, 2, "#FFFFFF", lambda: pulsar("9")),
+    ("×", 1, 3, "#C084FC", lambda: pulsar("*")),
+    ("4", 2, 0, "#FFFFFF", lambda: pulsar("4")),
+    ("5", 2, 1, "#FFFFFF", lambda: pulsar("5")),
+    ("6", 2, 2, "#FFFFFF", lambda: pulsar("6")),
+    ("−", 2, 3, "#C084FC", lambda: pulsar("-")),
+    ("1", 3, 0, "#FFFFFF", lambda: pulsar("1")),
+    ("2", 3, 1, "#FFFFFF", lambda: pulsar("2")),
+    ("3", 3, 2, "#FFFFFF", lambda: pulsar("3")),
+    ("+", 3, 3, "#C084FC", lambda: pulsar("+")),
+    ("±", 4, 0, "#FFFFFF", lambda: pulsar("-")),
+    ("0", 4, 1, "#FFFFFF", lambda: pulsar("0")),
+    (".", 4, 2, "#FFFFFF", lambda: pulsar(".")),
+    ("=", 4, 3, "#A855F7", calcular),
+]
+for texto, fila, columna, color, accion in botones:
+    boton = tk.Button(
+        marco,
+        text=texto,
+        font=("Arial", 16, "bold"),
+        bg=color,
+        fg="#54206F",
+        activebackground="#E9B8FF",
+        relief="flat",
+        bd=0,
+        command=accion
+    )
+    boton.grid(
+        row=fila,
+        column=columna,
+        padx=4,
+        pady=4,
+        sticky="nsew"
+    )
+for fila in range(5):
+    marco.rowconfigure(fila, weight=1)
+for columna in range(4):
+    marco.columnconfigure(columna, weight=1)
+ventana.mainloop()
