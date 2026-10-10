@@ -1,34 +1,41 @@
-        
 import tkinter as tk
-ventana = tk.Tk()
-ventana.title("Calculadora")
-ventana.geometry("320x500")
-ventana.resizable(False, False)
-ventana.configure(bg="#EADCF8")
-pantalla = tk.Entry(
+
+ventana = tk\.Tk&#40;&#41;
+ventana\.title&#40;"Calculadora"&#41;
+ventana\.geometry&#40;"320x500"&#41;
+ventana\.resizable&#40;False, False&#41;
+ventana\.configure&#40;bg="\#EADCF8"&#41;
+
+pantalla = tk\.Entry&#40;
     ventana,
-    font=("Arial", 25),
-    bg="#F9F0FF",
-    fg="#7028A0",
+    font=&#40;"Arial", 25&#41;,
+    bg="\#F9F0FF",
+    fg="\#7028A0",
     justify="right",
     bd=0
-)
-pantalla.pack(fill="x", padx=15, pady=20, ipady=15)
-marco = tk.Frame(ventana, bg="#EADCF8")
-marco.pack(expand=True, fill="both", padx=10, pady=5)
-def pulsar(valor):
-    pantalla.insert(tk.END, valor)
-def borrar():
-    pantalla.delete(0, tk.END)
-def calcular():
+&#41;
+pantalla\.pack&#40;fill="x", padx=15, pady=20, ipady=15&#41;
+
+marco = tk\.Frame&#40;ventana, bg="\#EADCF8"&#41;
+marco\.pack&#40;expand=True, fill="both", padx=10, pady=5&#41;
+
+def pulsar&#40;valor&#41;:
+    pantalla\.insert&#40;tk\.END, valor&#41;
+
+def borrar&#40;&#41;:
+    pantalla\.delete&#40;0, tk\.END&#41;
+
+def calcular&#40;&#41;:
     try:
-        resultado = eval(pantalla.get())
-        pantalla.delete(0, tk.END)
-        pantalla.insert(0, str(resultado))
+        resultado = eval&#40;pantalla\.get&#40;&#41;&#41;
+        pantalla\.delete&#40;0, tk\.END&#41;
+        pantalla\.insert&#40;0, str&#40;resultado&#41;&#41;
     except:
-        pantalla.delete(0, tk.END)
-        pantalla.insert(0, "Error")
-botones = [
+        pantalla\.delete&#40;0, tk\.END&#41;
+        pantalla\.insert&#40;0, "Error"&#41;
+
+botones = &#91;
+        
     ("C", 0, 0, "#D8B4F8", borrar),
     ("(", 0, 1, "#D8B4F8", lambda: pulsar("(")),
     (")", 0, 2, "#D8B4F8", lambda: pulsar(")")),
