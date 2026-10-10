@@ -69,5 +69,3 @@ if st.button("＝ CALCULAR", use_container_width=True):
             resultado = eval(expresion, {"__builtins__": {}}, {})
             st.session_state.expresion = str(resultado)
             st.rerun()
-    except Exception:
-        st.error("No se pudo calcular. Revisa la operación.")
